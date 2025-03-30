@@ -37,7 +37,7 @@ async function run() {
         const usersCollection = client.db('JobPortals').collection('users');
         const statsCollection = client.db('JobPortals').collection('stats');
         const companysCollection = client.db('JobPortals').collection('companys');
-        const jobApplicationCollection = client.db('JobProtals').collection('jobApplications');
+        const jobApplicationCollection = client.db('JobPortals').collection('jobApplications');
 
         // get all jobs
         app.get('/jobs', async (req, res) => {
