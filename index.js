@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.port || 3000;
 
 // Middleware
@@ -32,14 +32,37 @@ async function run() {
         await client.connect();
 
         // jobs relative api 
-        const jobsCollection = client.db('jobPortals').collection('jobs'); 
-        const categoriesCollection = client.db('jobPortals').collection('categories');
-        const usersCollection = client.db('jobPortals').collection('users');
-
+        const jobsCollection = client.db('JobPortals').collection('jobs'); 
+        const categoriesCollection = client.db('JobPortals').collection('categories');
+        const usersCollection = client.db('JobPortals').collection('users');
+        const statsCollection = client.db('JobPortals').collection('stats');
+        const companysCollection = client.db('JobPortals').collection('companys');
 
         // get all jobs
         app.get('/jobs', async (req, res) => {
             const cursor = jobsCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
+        app.get('/jobs/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await jobsCollection.findOne(query);
+            res.send(result);
+        })
+
+
+        // get stats data 
+        app.get('/stats', async (req, res) => {
+            const cursor = statsCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
+        // get companys data
+        app.get('/companys', async (req, res) => {
+            const cursor = companysCollection.find();
             const result = await cursor.toArray();
             res.send(result);
         });
