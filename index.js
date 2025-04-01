@@ -60,6 +60,36 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/jobApplication', async(req, res) => {
+            const email = req.query.email;
+            const query = { userEmail: email };
+            const result = await jobApplicationCollection.find(query).toArray();
+            for (const application of result) {
+                const query1 = { _id: new ObjectId(application.job_id) }
+                const job = await jobsCollection.findOne(query1);
+                if (job) {
+                    application.title = job.title;
+                    application.location = job.location;
+                    application.company = job.company;
+                    application.company_logo = job.company_logo;
+                    application.jobType = job.jobType;
+                }
+            }
+            res.send(result);
+        })
+
+
+        app.delete('/jobApplications/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const result = await jobApplicationCollection.deleteOne({ _id: new ObjectId(id) });
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        });
+
+
+
 
         // get stats data 
         app.get('/stats', async (req, res) => {
