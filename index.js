@@ -38,6 +38,8 @@ async function run() {
         const statsCollection = client.db('JobPortals').collection('stats');
         const companysCollection = client.db('JobPortals').collection('companys');
         const jobApplicationCollection = client.db('JobPortals').collection('jobApplications');
+        const blogsCollection = client.db('JobPortals').collection('blogs');
+
 
         // get all jobs
         app.get('/jobs', async (req, res) => {
@@ -123,6 +125,21 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         });
+
+
+        // get blogs data 
+        app.get('/blogs', async(req, res) => {
+            const cursor = blogsCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        // post blods data 
+        app.post('/blogs', async(req, res) => {
+            const blog = req.body;
+            const result = await blogsCollection.insertOne(blog);
+            res.send(result);
+        })
 
 
     // Send a ping to confirm a successful connection
