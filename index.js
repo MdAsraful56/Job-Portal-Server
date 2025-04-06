@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const e = require('express');
@@ -10,7 +11,8 @@ const port = process.env.port || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(jwt());
+app.use(cookieParser());
+
 
 
 app.get('/', (req, res) => {
@@ -32,7 +34,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
     // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         // jobs relative api 
         const jobsCollection = client.db('JobPortals').collection('jobs'); 
@@ -45,11 +47,16 @@ async function run() {
 
 
         // auth related api 
-        app.post('/jwt', async(req, res) => {
-            const user = req.body;
-            const token = jwt.sign(user, "process.env", { expiresIn: '1h' });
-            res.send(token);
-        })
+        // app.post('/jwt', async(req, res) => {
+        //     const user = req.body;
+        //     const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' });
+        //     res
+        //     .cookie('token', token, {
+        //         httpOnly: true,
+        //         secure: false,
+        //     })
+        //     .send({success: true});
+        // })
 
 
         // get all jobs
@@ -154,8 +161,8 @@ async function run() {
 
 
     // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        // await client.db("admin").command({ ping: 1 });
+        // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
     // Ensures that the client will close when you finish/error
         // await client.close();
