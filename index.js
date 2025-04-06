@@ -1,13 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const e = require('express');
 const port = process.env.port || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(jwt());
 
 
 app.get('/', (req, res) => {
@@ -39,6 +42,14 @@ async function run() {
         const companysCollection = client.db('JobPortals').collection('companys');
         const jobApplicationCollection = client.db('JobPortals').collection('jobApplications');
         const blogsCollection = client.db('JobPortals').collection('blogs');
+
+
+        // auth related api 
+        app.post('/jwt', async(req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, "process.env", { expiresIn: '1h' });
+            res.send(token);
+        })
 
 
         // get all jobs
